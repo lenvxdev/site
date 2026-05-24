@@ -13,6 +13,7 @@ export function GlobalSounds() {
 
   useEffect(() => {
     if (!ready || lowEnd) return;
+    try { if (localStorage.getItem("sound-pref") === "no") return; } catch {}
 
     playSfx("/hover.mp3",  { volume: 0 });
     playSfx("/select.mp3", { volume: 0 });
@@ -23,7 +24,7 @@ export function GlobalSounds() {
       const el = (e.target as Element).closest(INTERACTIVE);
       if (el && el !== lastHovered) {
         lastHovered = el;
-        playSfx("/hover.mp3", { volume: 0.38, wet: 0.18 });
+        playSfx("/hover.mp3", { volume: 0.19, wet: 0.18 });
       }
     };
 
@@ -35,7 +36,7 @@ export function GlobalSounds() {
 
     const onClick = (e: MouseEvent) => {
       if ((e.target as Element).closest(INTERACTIVE)) {
-        playSfx("/select.mp3", { volume: 0.5, wet: 0.22 });
+        playSfx("/select.mp3", { volume: 0.25, wet: 0.22 });
       }
     };
 
