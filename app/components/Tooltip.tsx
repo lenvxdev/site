@@ -3,7 +3,7 @@
 import { type ReactNode, useEffect, useRef, useState } from "react";
 
 const DASH_LINE =
-  "repeating-linear-gradient(to right, #52525b 0, #52525b 3px, transparent 3px, transparent 7px)";
+  "repeating-linear-gradient(to right, rgba(0,17,255,0.6) 0, rgba(0,17,255,0.6) 3px, transparent 3px, transparent 7px)";
 
 export function Tooltip({ children, content }: { children: ReactNode; content: ReactNode }) {
   const [visible, setVisible] = useState(false);

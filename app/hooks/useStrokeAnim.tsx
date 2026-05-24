@@ -76,11 +76,10 @@ export function useStrokeAnim<T extends HTMLElement = HTMLElement>(color = "rgba
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
-    const handler = (e: TouchEvent) => {
-      e.preventDefault();
+    const handler = () => {
       enterRef.current();
     };
-    el.addEventListener("touchstart", handler, { passive: false });
+    el.addEventListener("touchstart", handler, { passive: true });
     return () => el.removeEventListener("touchstart", handler);
   }, [dims]);
 
