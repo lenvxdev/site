@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { playSfx } from "../lib/audio";
+import { playSfx, isSoundEnabled } from "../lib/audio";
 import { usePS2Ready } from "../hooks/usePS2Ready";
 import { usePerf } from "../contexts/PerformanceContext";
 
@@ -12,8 +12,7 @@ export function GlobalSounds() {
   const { lowEnd } = usePerf();
 
   useEffect(() => {
-    if (!ready || lowEnd) return;
-    try { if (localStorage.getItem("sound-pref") === "no") return; } catch {}
+    if (!ready || lowEnd || !isSoundEnabled()) return;
 
     playSfx("/hover.mp3",  { volume: 0 });
     playSfx("/select.mp3", { volume: 0 });

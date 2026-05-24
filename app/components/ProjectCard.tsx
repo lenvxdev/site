@@ -33,7 +33,7 @@ export function ProjectCard({ repo }: { repo: GithubRepo }) {
         <div className="flex items-center gap-2.5 mb-1">
           <span className="text-white font-medium">{repo.name}</span>
           {repo.language && (
-            <span className="text-xs text-zinc-500 font-mono">{repo.language}</span>
+            <span className="hidden sm:inline text-xs text-zinc-500 font-mono">{repo.language}</span>
           )}
         </div>
         {repo.description && (

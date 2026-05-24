@@ -1,3 +1,7 @@
+let _soundEnabled = true;
+export function setSoundEnabled(v: boolean) { _soundEnabled = v; }
+export function isSoundEnabled() { return _soundEnabled; }
+
 let _ctx: AudioContext | null = null;
 
 function getCtx(): AudioContext {

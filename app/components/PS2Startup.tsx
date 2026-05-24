@@ -2,24 +2,20 @@
 
 import { motion, AnimatePresence } from "motion/react";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { playWithReverb } from "../lib/audio";
+import { playWithReverb, setSoundEnabled } from "../lib/audio";
 import { signalPS2Ready } from "../hooks/usePS2Ready";
 
 const SWITCH_AT = 5000;
 const FADE_MS   = 1600;
 
-function getSoundPref(): string | null {
-  try { return localStorage.getItem("sound-pref"); } catch { return null; }
-}
-
-function setSoundPref(val: string) {
-  try { localStorage.setItem("sound-pref", val); } catch {}
-}
-
 export function PS2Startup() {
   const [phase, setPhase] = useState<"init" | "wait" | "consent" | "welcome" | "fade" | "done">("init");
   const started = useRef(false);
   const timer   = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    setPhase("wait");
+  }, []);
 
   useEffect(() => {
     if (phase === "done" || phase === "init") {
@@ -30,21 +26,8 @@ export function PS2Startup() {
     return () => { document.body.style.overflow = ""; };
   }, [phase]);
 
-  useEffect(() => {
-    const forced = new URLSearchParams(window.location.search).get("boot") === "1";
-    if (forced) {
-      try { localStorage.removeItem("sound-pref"); } catch {}
-    }
-    if (!forced && getSoundPref() !== null) {
-      signalPS2Ready();
-      setPhase("done");
-      return;
-    }
-    setPhase("wait");
-  }, []);
-
   const startExperience = useCallback((withSound: boolean) => {
-    setSoundPref(withSound ? "yes" : "no");
+    setSoundEnabled(withSound);
 
     if (!withSound) {
       setPhase("fade");
