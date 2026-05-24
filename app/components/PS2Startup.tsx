@@ -22,6 +22,15 @@ export function PS2Startup() {
   const timer   = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
+    if (phase === "done" || phase === "init") {
+      document.body.style.overflow = "";
+    } else {
+      document.body.style.overflow = "hidden";
+    }
+    return () => { document.body.style.overflow = ""; };
+  }, [phase]);
+
+  useEffect(() => {
     const forced = new URLSearchParams(window.location.search).get("boot") === "1";
     if (forced) {
       try { localStorage.removeItem("sound-pref"); } catch {}
@@ -78,8 +87,8 @@ export function PS2Startup() {
       <motion.div
         className="absolute inset-0 pointer-events-none"
         style={{ background: "radial-gradient(ellipse at 50% 45%, #04071a 0%, #000000 65%)" }}
-        animate={{ opacity: phase === "welcome" || phase === "fade" ? 1 : 0 }}
-        transition={{ duration: 1.4, ease: "easeOut" }}
+        animate={{ opacity: phase === "welcome" ? 1 : 0 }}
+        transition={{ duration: phase === "fade" ? FADE_MS / 1000 : 1.4, ease: "easeOut" }}
       />
 
       <AnimatePresence mode="wait">
@@ -104,20 +113,23 @@ export function PS2Startup() {
             exit={{ opacity: 0, y: -8, transition: { duration: 0.3, ease: "easeIn" } }}
             transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
             className="relative flex flex-col items-center gap-6 px-6 text-center"
+            onClick={(e) => e.stopPropagation()}
           >
             <p className="text-zinc-300 text-sm font-mono tracking-widest uppercase">
               do you mind any sounds on the website?
             </p>
             <div className="flex gap-4">
               <button
+                type="button"
                 onClick={() => startExperience(true)}
-                className="px-6 py-2 text-sm font-mono text-white border border-white/20 rounded-lg hover:bg-white/10 transition-colors"
+                className="min-h-[44px] px-6 py-2.5 text-sm font-mono text-white border border-white/20 rounded-lg hover:bg-white/10 active:bg-white/15 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-white"
               >
                 no i don&apos;t mind
               </button>
               <button
+                type="button"
                 onClick={() => startExperience(false)}
-                className="px-6 py-2 text-sm font-mono text-zinc-500 border border-white/10 rounded-lg hover:bg-white/5 transition-colors"
+                className="min-h-[44px] px-6 py-2.5 text-sm font-mono text-zinc-500 border border-white/10 rounded-lg hover:bg-white/5 active:bg-white/10 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-white/40"
               >
                 no sounds please
               </button>

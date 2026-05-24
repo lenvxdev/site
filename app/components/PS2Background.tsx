@@ -13,13 +13,13 @@ if (typeof window !== "undefined") {
   };
 }
 
-const vert = /* glsl */`
+const vert = `
 void main() {
   gl_Position = vec4(position, 1.0);
 }
 `;
 
-const frag = /* glsl */`
+const frag = `
 precision highp float;
 
 uniform float uTime;
@@ -93,7 +93,7 @@ function ShaderPlane() {
         ref={matRef}
         vertexShader={vert}
         fragmentShader={frag}
-        uniforms={uniforms.current} // eslint-disable-line react-hooks/refs
+        uniforms={uniforms.current}
         depthTest={false}
         depthWrite={false}
       />
@@ -118,7 +118,7 @@ export function PS2Background() {
       <Canvas
         orthographic
         camera={{ position: [0, 0, 1] }}
-        gl={{ antialias: false }}
+        gl={{ antialias: false, powerPreference: "high-performance", failIfMajorPerformanceCaveat: false }}
         dpr={[1, 1.5]}
       >
         <ShaderPlane />

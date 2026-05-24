@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { type Dims, DRAW_MS, ERASE_MS, FADE_IN_MS, FADE_OUT_MS, easeInOut, roundedRectPath } from "../lib/stroke";
 import { usePerf } from "../contexts/PerformanceContext";
 
@@ -13,7 +13,10 @@ export function useStrokeAnim<T extends HTMLElement = HTMLElement>(color = "rgba
   const len     = useRef(0);
   const draw    = useRef(0);
   const fade    = useRef(0);
+  const lowEndR = useRef(lowEnd);
   const [dims, setDims] = useState<Dims | null>(null);
+
+  useEffect(() => { lowEndR.current = lowEnd; }, [lowEnd]);
 
   useEffect(() => {
     const el = ref.current;
@@ -37,7 +40,7 @@ export function useStrokeAnim<T extends HTMLElement = HTMLElement>(color = "rgba
     p.style.strokeDashoffset = "0";
   }, [dims]);
 
-  const anim = (to: number) => {
+  const anim = useCallback((to: number) => {
     const svg = svgRef.current;
     const p   = pathRef.current;
     if (!p || !svg) return;
@@ -63,25 +66,17 @@ export function useStrokeAnim<T extends HTMLElement = HTMLElement>(color = "rgba
     };
 
     raf.current = requestAnimationFrame(tick);
-  };
+  }, []);
 
-  const enterRef = useRef<() => void>(() => {});
-  const leaveRef = useRef<() => void>(() => {});
-  enterRef.current = () => { if (!lowEnd) anim(1); };
-  leaveRef.current = () => { if (!lowEnd) anim(0); };
-
-  const enter = () => enterRef.current();
-  const leave = () => leaveRef.current();
+  const enter = useCallback(() => { if (!lowEndR.current) anim(1); }, [anim]);
+  const leave = useCallback(() => { if (!lowEndR.current) anim(0); }, [anim]);
 
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
-    const handler = () => {
-      enterRef.current();
-    };
-    el.addEventListener("touchstart", handler, { passive: true });
-    return () => el.removeEventListener("touchstart", handler);
-  }, [dims]);
+    el.addEventListener("touchstart", enter, { passive: true });
+    return () => el.removeEventListener("touchstart", enter);
+  }, [dims, enter]);
 
   const glow =
     `drop-shadow(0 0 2px ${color}) ` +
@@ -104,7 +99,7 @@ export function strokeSvg({ svgRef, pathRef, dims, color, glow, lowEnd }: SvgPro
       width={dims.w}
       height={dims.h}
       fill="none"
-      style={{ overflow: "visible", opacity: 0, filter: glow }}
+      style={{ overflow: "visible", opacity: 0, filter: glow, touchAction: "none" }}
     >
       <path ref={pathRef} d={d} stroke={color} strokeWidth="1.5" strokeDasharray="0" strokeDashoffset="0" strokeLinecap="round" />
     </svg>

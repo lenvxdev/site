@@ -25,8 +25,8 @@ export default async function Home() {
   ]);
 
   return (
-    <main className="min-h-screen flex items-center justify-center p-4">
-      <div className="w-full max-w-6xl">
+    <main className="min-h-screen flex items-center justify-center p-4 overflow-x-hidden">
+      <div className="w-full max-w-6xl min-w-0">
 
         <ProfileHeader />
 

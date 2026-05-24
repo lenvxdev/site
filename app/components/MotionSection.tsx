@@ -60,6 +60,11 @@ export function MotionSection({ id, className, children, delay = 0 }: Props) {
         type: "spring", damping: 24, stiffness: 180, mass: 0.9, delay,
         backdropFilter: { type: "tween", ease: "easeOut", delay: delay + 0.45, duration: 0.5 },
       }}
+      onUpdate={(latest) => {
+        if (outerRef.current && typeof latest.backdropFilter === "string") {
+          (outerRef.current.style as CSSStyleDeclaration & { webkitBackdropFilter?: string }).webkitBackdropFilter = latest.backdropFilter;
+        }
+      }}
       className={className}
     >
       <div ref={innerRef}>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { usePerf } from "../contexts/PerformanceContext";
 
 export function LowEndNotice() {
@@ -17,11 +17,18 @@ export function LowEndNotice() {
     requestAnimationFrame(() => requestAnimationFrame(() => setAnim(true)));
   }, [lowEnd, forced]);
 
-  const dismiss = () => {
+  const dismiss = useCallback(() => {
     setAnim(false);
     setTimeout(() => setShow(false), 250);
     try { localStorage.setItem("perf-ack", "1"); } catch {}
-  };
+  }, []);
+
+  useEffect(() => {
+    if (!show) return;
+    const handler = (e: KeyboardEvent) => { if (e.key === "Escape") dismiss(); };
+    document.addEventListener("keydown", handler);
+    return () => document.removeEventListener("keydown", handler);
+  }, [show, dismiss]);
 
   if (!show) return null;
 
@@ -30,7 +37,7 @@ export function LowEndNotice() {
       className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4 sm:p-6"
       style={{ opacity: anim ? 1 : 0, transition: "opacity 0.25s ease" }}
     >
-      <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={dismiss} aria-hidden />
+      <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={dismiss} aria-hidden="true" />
       <div
         className="relative z-10 w-full max-w-sm rounded-2xl border border-white/[0.1] backdrop-blur-2xl px-7 py-7 shadow-2xl"
         style={{
@@ -44,8 +51,9 @@ export function LowEndNotice() {
           some features have been disabled for your device&apos;s sake :)
         </p>
         <button
+          type="button"
           onClick={dismiss}
-          className="w-full bg-white text-black text-sm font-semibold rounded-xl py-2.5 transition-colors hover:bg-zinc-100 active:scale-95"
+          className="w-full bg-white text-black text-sm font-semibold rounded-xl py-2.5 transition-colors hover:bg-zinc-100 active:scale-95 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
         >
           thank you!
         </button>

@@ -87,9 +87,10 @@ export function SectionHeader({ section, label }: SectionHeaderProps) {
       <button
         type="button"
         onClick={handleCopy}
+        onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); handleCopy(); } }}
         aria-label="Copy section link"
         data-cursor-hash
-        className="text-zinc-600 hover:text-zinc-300 transition-colors font-mono font-bold select-none"
+        className="text-zinc-600 hover:text-zinc-300 transition-colors font-mono font-bold select-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/60 rounded-sm"
       >
         #
       </button>

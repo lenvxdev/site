@@ -20,7 +20,8 @@ export function ProjectCard({ repo }: { repo: GithubRepo }) {
       href={repo.html_url}
       target="_blank"
       rel="noopener noreferrer"
-      className="relative flex items-start justify-between gap-4 rounded-xl border border-white/[0.08] bg-white/[0.04] backdrop-blur-sm px-5 py-4 hover:bg-white/[0.08] hover:border-transparent transition-colors"
+      aria-label={`${repo.name} on GitHub`}
+      className="relative flex items-start justify-between gap-4 rounded-xl border border-white/[0.08] bg-white/[0.04] backdrop-blur-sm px-5 py-4 hover:bg-white/[0.08] hover:border-transparent transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/60"
       onMouseEnter={enter}
       onMouseLeave={leave}
       onTouchEnd={leave}

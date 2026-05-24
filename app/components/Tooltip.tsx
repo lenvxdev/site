@@ -1,6 +1,6 @@
 "use client";
 
-import { type ReactNode, useEffect, useRef, useState } from "react";
+import { type ReactNode, useCallback, useEffect, useRef, useState } from "react";
 
 const DASH_LINE =
   "repeating-linear-gradient(to right, rgba(0,17,255,0.6) 0, rgba(0,17,255,0.6) 3px, transparent 3px, transparent 7px)";
@@ -11,20 +11,20 @@ export function Tooltip({ children, content }: { children: ReactNode; content: R
   const timerRef   = useRef<ReturnType<typeof setTimeout> | null>(null);
   const isTouchRef = useRef(false);
 
-  const clearTimer = () => {
+  const clearTimer = useCallback(() => {
     if (timerRef.current) clearTimeout(timerRef.current);
-  };
+  }, []);
 
-  const show = (delay = 0) => {
+  const hide = useCallback(() => {
+    clearTimer();
+    setVisible(false);
+  }, [clearTimer]);
+
+  const show = useCallback((delay = 0) => {
     clearTimer();
     if (delay) timerRef.current = setTimeout(() => setVisible(true), delay);
     else setVisible(true);
-  };
-
-  const hide = () => {
-    clearTimer();
-    setVisible(false);
-  };
+  }, [clearTimer]);
 
   useEffect(() => {
     const el = spanRef.current;
@@ -38,6 +38,18 @@ export function Tooltip({ children, content }: { children: ReactNode; content: R
     el.addEventListener("touchstart", handler, { passive: false });
     return () => el.removeEventListener("touchstart", handler);
   }, []);
+
+  useEffect(() => {
+    if (!visible) return;
+    const handler = (e: TouchEvent) => {
+      if (spanRef.current && !spanRef.current.contains(e.target as Node)) {
+        hide();
+        setTimeout(() => { isTouchRef.current = false; }, 500);
+      }
+    };
+    document.addEventListener("touchstart", handler, { passive: true });
+    return () => document.removeEventListener("touchstart", handler);
+  }, [visible, hide]);
 
   return (
     <span

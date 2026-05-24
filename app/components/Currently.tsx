@@ -1,5 +1,6 @@
 "use client";
 
+import { type KeyboardEvent } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { useLanyard, type LanyardActivity } from "../hooks/useLanyard";
 import { StrokeCard } from "./StrokeCard";
@@ -48,8 +49,9 @@ export function Currently({ userId }: { userId: string }) {
 
   if (!data) return null;
 
-  const custom  = data.activities.find((a) => a.type === 4);
-  const playing = data.activities.find((a) => a.type === 0);
+  const activities = data.activities ?? [];
+  const custom  = activities.find((a) => a.type === 4);
+  const playing = activities.find((a) => a.type === 0);
   const hasActivity = data.listening_to_spotify || !!custom?.state || !!playing;
   const playingImg = playing ? activityImgUrl(playing) : null;
 
@@ -73,8 +75,7 @@ export function Currently({ userId }: { userId: string }) {
             <AnimatePresence mode="wait">
               {playingImg && (
                 <motion.div key={playingImg} {...textSlip()} className="shrink-0">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
+                      <img
                     src={playingImg}
                     alt={playing.assets?.large_text ?? playing.name}
                     width={40}
@@ -114,13 +115,21 @@ export function Currently({ userId }: { userId: string }) {
           <StrokeCard
             key="spotify"
             {...cardMotion}
-            className={`${CARD_CLASS} cursor-pointer`}
+            className={`${CARD_CLASS} cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1DB954]`}
             color="#1DB954"
+            role="link"
+            tabIndex={0}
+            aria-label={`Listening to ${data.spotify.song} by ${data.spotify.artist} on Spotify`}
             onClick={() => window.open(`https://open.spotify.com/track/${data.spotify?.track_id}`, "_blank", "noopener,noreferrer")}
+            onKeyDown={(e: KeyboardEvent<HTMLDivElement>) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                window.open(`https://open.spotify.com/track/${data.spotify?.track_id}`, "_blank", "noopener,noreferrer");
+              }
+            }}
           >
             <AnimatePresence mode="wait">
               <motion.div key={data.spotify.album_art_url} {...textSlip()} className="shrink-0">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={data.spotify.album_art_url}
                   alt={data.spotify.album}
