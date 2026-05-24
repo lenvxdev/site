@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { useLang } from "../contexts/LangContext";
 
 interface SectionHeaderProps {
   section: string;
@@ -9,10 +10,8 @@ interface SectionHeaderProps {
 
 type Phase = "label" | "copied" | "copied-exit";
 
-const COPIED_TEXT = "Section link copied!";
 const COOLDOWN = 2500;
 const CHAR_DELAY = 28;
-const EXIT_DURATION = COPIED_TEXT.length * CHAR_DELAY + 220;
 
 const charIn = (delay: number) =>
   `charIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) ${delay}ms forwards`;
@@ -52,6 +51,9 @@ function Chars({
 }
 
 export function SectionHeader({ section, label }: SectionHeaderProps) {
+  const { t } = useLang();
+  const copiedText = t("copied");
+  const exitDuration = copiedText.length * CHAR_DELAY + 220;
   const [phase, setPhase] = useState<Phase>("label");
   const [labelKey, setLabelKey] = useState(0);
   const cooldownTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -75,7 +77,7 @@ export function SectionHeader({ section, label }: SectionHeaderProps) {
           setPhase("label");
           setLabelKey((k) => k + 1);
           busy.current = false;
-        }, EXIT_DURATION);
+        }, exitDuration);
       }, COOLDOWN);
     } catch {}
   }
@@ -90,7 +92,7 @@ export function SectionHeader({ section, label }: SectionHeaderProps) {
         onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); handleCopy(); } }}
         aria-label="Copy section link"
         data-cursor-hash
-        className="text-zinc-600 hover:text-zinc-300 transition-colors font-mono font-bold select-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/60 rounded-sm"
+        className="text-zinc-600 hover:text-white transition-colors font-mono font-bold select-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/60 rounded-sm"
       >
         #
       </button>
@@ -113,7 +115,7 @@ export function SectionHeader({ section, label }: SectionHeaderProps) {
             className="absolute left-0 top-1/2 -translate-y-1/2 text-white text-lg font-semibold whitespace-nowrap"
           >
             <Chars
-              text={COPIED_TEXT}
+              text={copiedText}
               getAnimation={phase === "copied-exit" ? charOut : charIn}
               initialOpacity={phase === "copied-exit" ? 1 : 0}
             />

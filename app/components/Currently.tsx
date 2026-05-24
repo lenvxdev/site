@@ -4,6 +4,7 @@ import { type KeyboardEvent } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { useLanyard, type LanyardActivity } from "../hooks/useLanyard";
 import { StrokeCard } from "./StrokeCard";
+import { useLang } from "../contexts/LangContext";
 
 function activityImgUrl(activity: LanyardActivity): string | null {
   const img = activity.assets?.large_image;
@@ -45,6 +46,7 @@ const textSlip = (delay = 0) => ({
 const CARD_CLASS = "flex items-center gap-3 backdrop-blur-sm bg-white/[0.04] border border-white/[0.08] rounded-xl px-4 py-3";
 
 export function Currently({ userId }: { userId: string }) {
+  const { t } = useLang();
   const data = useLanyard(userId);
 
   if (!data) return null;
@@ -60,7 +62,7 @@ export function Currently({ userId }: { userId: string }) {
       <AnimatePresence mode="wait">
         {!hasActivity ? (
           <motion.p key="empty" {...fadeSlide} className="text-zinc-600 text-sm">
-            just existing
+            {t("idle")}
           </motion.p>
         ) : custom?.state ? (
           <motion.p key="status" {...fadeSlide} className="text-zinc-400 text-sm">
@@ -140,7 +142,7 @@ export function Currently({ userId }: { userId: string }) {
               </motion.div>
             </AnimatePresence>
             <div className="min-w-0">
-              <p className="text-zinc-500 text-xs mb-0.5">Listening to Spotify</p>
+              <p className="text-zinc-500 text-xs mb-0.5">{t("listeningSpotify")}</p>
               <AnimatePresence mode="wait">
                 <motion.p key={data.spotify.song} {...textSlip(0)} className="text-white text-sm font-medium truncate">
                   {data.spotify.song}

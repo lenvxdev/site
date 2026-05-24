@@ -4,11 +4,13 @@ import { motion, AnimatePresence } from "motion/react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { playWithReverb, setSoundEnabled } from "../lib/audio";
 import { signalPS2Ready } from "../hooks/usePS2Ready";
+import { useLang } from "../contexts/LangContext";
 
 const SWITCH_AT = 5000;
 const FADE_MS   = 1600;
 
 export function PS2Startup() {
+  const { t } = useLang();
   const [phase, setPhase] = useState<"init" | "wait" | "consent" | "welcome" | "fade" | "done">("init");
   const started = useRef(false);
   const timer   = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -84,7 +86,7 @@ export function PS2Startup() {
             transition={{ duration: 0.6 }}
             className="relative text-zinc-600 text-xs font-mono tracking-[0.3em] uppercase select-none animate-pulse"
           >
-            tap anywhere to continue...
+            {t("tap")}
           </motion.p>
         )}
 
@@ -99,7 +101,7 @@ export function PS2Startup() {
             onClick={(e) => e.stopPropagation()}
           >
             <p className="text-zinc-300 text-sm font-mono tracking-widest uppercase">
-              do you mind any sounds on the website?
+              {t("soundQuestion")}
             </p>
             <div className="flex gap-4">
               <button
@@ -107,14 +109,14 @@ export function PS2Startup() {
                 onClick={() => startExperience(true)}
                 className="min-h-[44px] px-6 py-2.5 text-sm font-mono text-white border border-white/20 rounded-lg hover:bg-white/10 active:bg-white/15 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-white"
               >
-                no i don&apos;t mind
+                {t("soundYes")}
               </button>
               <button
                 type="button"
                 onClick={() => startExperience(false)}
                 className="min-h-[44px] px-6 py-2.5 text-sm font-mono text-zinc-500 border border-white/10 rounded-lg hover:bg-white/5 active:bg-white/10 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-white/40"
               >
-                no sounds please
+                {t("soundNo")}
               </button>
             </div>
           </motion.div>
@@ -132,7 +134,7 @@ export function PS2Startup() {
               className="text-white text-3xl sm:text-4xl font-semibold tracking-tight text-center px-6"
               style={{ textShadow: "0 0 35px rgba(80,130,255,0.45), 0 0 90px rgba(50,90,255,0.18)" }}
             >
-              Welcome to lenvx.dev, visitor.
+              {t("welcome")}
             </motion.h1>
 
             <motion.div

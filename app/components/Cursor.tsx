@@ -3,8 +3,7 @@
 import { useEffect, useRef, useSyncExternalStore } from "react";
 import { usePerf } from "../contexts/PerformanceContext";
 
-const DOT  = { w: 8,  h: 8,  r: 4  };
-const HASH = { w: 28, h: 28, r: 14 };
+const DOT  = { w: 8, h: 8, r: 4 };
 const LERP = 0.35;
 const FADE = 0.14;
 
@@ -37,8 +36,27 @@ export function Cursor() {
     if (!dot) return;
 
     const onMove = (e: MouseEvent) => {
-      const onHash = !!(e.target as Element).closest("[data-cursor-hash]");
-      tgt.current = { x: e.clientX, y: e.clientY, ...(onHash ? HASH : DOT) };
+      const target = e.target as Element;
+      const onHash      = !!target.closest("[data-cursor-hash]");
+      const underlineEl = target.closest("[data-cursor-underline]") as HTMLElement | null;
+
+      if (onHash) {
+        opacT.current = 0;
+        tgt.current = { x: e.clientX, y: e.clientY, ...DOT };
+      } else if (underlineEl) {
+        opacT.current = 1;
+        const rect = underlineEl.getBoundingClientRect();
+        tgt.current = {
+          x: rect.left + rect.width / 2,
+          y: rect.bottom + 6,
+          w: rect.width + 8,
+          h: 2,
+          r: 1,
+        };
+      } else {
+        opacT.current = 1;
+        tgt.current = { x: e.clientX, y: e.clientY, ...DOT };
+      }
     };
 
     const onLeave = () => { opacT.current = 0; };

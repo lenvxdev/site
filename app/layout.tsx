@@ -5,6 +5,7 @@ import { GlobalSounds } from "./components/GlobalSounds";
 import { LowEndNotice } from "./components/LowEndNotice";
 import { PS2Background } from "./components/PS2Background";
 import { PS2Startup } from "./components/PS2Startup";
+import { LangProvider } from "./contexts/LangContext";
 import { PerfProvider } from "./contexts/PerformanceContext";
 import "./globals.css";
 
@@ -89,6 +90,7 @@ export default function RootLayout({
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
       <body>
         <PerfProvider>
+          <LangProvider>
           <script
             type="application/ld+json"
             dangerouslySetInnerHTML={{
@@ -109,6 +111,7 @@ export default function RootLayout({
           <GlobalSounds />
           <LowEndNotice />
           {children}
+          </LangProvider>
         </PerfProvider>
       </body>
     </html>

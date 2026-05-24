@@ -2,8 +2,10 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { usePerf } from "../contexts/PerformanceContext";
+import { useLang } from "../contexts/LangContext";
 
 export function LowEndNotice() {
+  const { t } = useLang();
   const { lowEnd, forced } = usePerf();
   const [show, setShow]   = useState(false);
   const [anim, setAnim]   = useState(false);
@@ -46,16 +48,16 @@ export function LowEndNotice() {
           transition: "transform 0.3s cubic-bezier(0.22,1,0.36,1)",
         }}
       >
-        <p className="text-white text-base font-medium mb-1.5">heads up!</p>
+        <p className="text-white text-base font-medium mb-1.5">{t("headsUp")}</p>
         <p className="text-zinc-400 text-sm leading-relaxed mb-6">
-          some features have been disabled for your device&apos;s sake :)
+          {t("lowEndMsg")}
         </p>
         <button
           type="button"
           onClick={dismiss}
           className="w-full bg-white text-black text-sm font-semibold rounded-xl py-2.5 transition-colors hover:bg-zinc-100 active:scale-95 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
         >
-          thank you!
+          {t("thanks")}
         </button>
       </div>
     </div>
