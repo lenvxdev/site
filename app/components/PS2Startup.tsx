@@ -156,7 +156,7 @@ export function PS2Startup() {
               className="text-white text-3xl sm:text-4xl font-semibold tracking-tight text-center px-6"
               style={{ textShadow: "0 0 35px rgba(80,130,255,0.45), 0 0 90px rgba(50,90,255,0.18)" }}
             >
-              Welcome to lenvx.dev, user.
+              Welcome to lenvx.dev, visitor.
             </motion.h1>
 
             <motion.div
