@@ -1,0 +1,27 @@
+@import "tailwindcss";
+
+@theme inline {
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+@media (pointer: fine) {
+  html:not([data-low-end]) *, html:not([data-low-end]) *::before, html:not([data-low-end]) *::after {
+    cursor: none !important;
+  }
+}
+
+body {
+  background: #000;
+  color: #fff;
+}
+
+@keyframes charIn {
+  from { opacity: 0; transform: translateY(8px) scale(0.7); }
+  to   { opacity: 1; transform: translateY(0)  scale(1);   }
+}
+
+@keyframes charOut {
+  from { opacity: 1; transform: translateY(0)   scale(1);   }
+  to   { opacity: 0; transform: translateY(-8px) scale(0.7); }
+}
