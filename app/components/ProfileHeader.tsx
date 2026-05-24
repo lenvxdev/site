@@ -17,7 +17,7 @@ export function ProfileHeader() {
       transition={{ ...spring }}
     >
       <div className="relative h-44">
-        <Image src="/banner.png" alt="" fill sizes="100vw" className="object-cover" priority />
+        <Image src="/banner.png" alt="" fill sizes="(max-width: 1200px) calc(100vw - 2rem), 1152px" className="object-cover" priority />
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
       </div>
 

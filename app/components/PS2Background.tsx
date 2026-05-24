@@ -5,6 +5,14 @@ import { useRef } from "react";
 import * as THREE from "three";
 import { usePerf } from "../contexts/PerformanceContext";
 
+if (typeof window !== "undefined") {
+  const _warn = console.warn.bind(console);
+  console.warn = (...args: unknown[]) => {
+    if (typeof args[0] === "string" && args[0].startsWith("THREE.Clock")) return;
+    _warn(...args);
+  };
+}
+
 const vert = /* glsl */`
 void main() {
   gl_Position = vec4(position, 1.0);

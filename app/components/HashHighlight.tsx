@@ -113,15 +113,15 @@ export function HashHighlight({ id }: { id: string }) {
         overflow: "visible",
         opacity: 0,
         filter:
-          "drop-shadow(0 0 2px rgba(255,255,255,1)) " +
-          "drop-shadow(0 0 6px rgba(255,255,255,0.8)) " +
-          "drop-shadow(0 0 12px rgba(255,255,255,0.5)) " +
-          "drop-shadow(0 0 24px rgba(255,255,255,0.25))",
+          "drop-shadow(0 0 2px rgba(0,17,255,1)) " +
+          "drop-shadow(0 0 6px rgba(0,17,255,0.8)) " +
+          "drop-shadow(0 0 12px rgba(0,17,255,0.5)) " +
+          "drop-shadow(0 0 24px rgba(0,17,255,0.25))",
       }}
     >
       <path
         ref={pathRef}
-        stroke="rgba(255,255,255,0.7)"
+        stroke="rgba(0,17,255,0.7)"
         strokeWidth="1.5"
         strokeDasharray="0"
         strokeDashoffset="0"

@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { type Dims, DRAW_MS, ERASE_MS, FADE_IN_MS, FADE_OUT_MS, easeInOut, roundedRectPath } from "../lib/stroke";
 import { usePerf } from "../contexts/PerformanceContext";
 
-export function useStrokeAnim<T extends HTMLElement = HTMLElement>(color = "rgba(255,255,255,0.75)") {
+export function useStrokeAnim<T extends HTMLElement = HTMLElement>(color = "rgba(0,17,255,0.75)") {
   const { lowEnd } = usePerf();
   const ref     = useRef<T>(null);
   const svgRef  = useRef<SVGSVGElement>(null);
