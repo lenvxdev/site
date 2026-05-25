@@ -3,7 +3,7 @@
 import { motion, AnimatePresence } from "motion/react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { playWithReverb, setSoundEnabled } from "../lib/audio";
-import { signalPS2Ready } from "../hooks/usePS2Ready";
+import { signalPS2Ready, subscribeReplay } from "../hooks/usePS2Ready";
 import { useLang } from "../contexts/LangContext";
 
 const SWITCH_AT = 5000;
@@ -12,11 +12,21 @@ const FADE_MS   = 1600;
 export function PS2Startup() {
   const { t } = useLang();
   const [phase, setPhase] = useState<"init" | "wait" | "consent" | "welcome" | "fade" | "done">("init");
-  const started = useRef(false);
-  const timer   = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const started    = useRef(false);
+  const timer      = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const isReturnRef = useRef(false);
 
   useEffect(() => {
     setPhase("wait");
+  }, []);
+
+  useEffect(() => {
+    return subscribeReplay((ret) => {
+      isReturnRef.current = ret;
+      started.current = false;
+      if (timer.current) clearTimeout(timer.current);
+      setPhase("wait");
+    });
   }, []);
 
   useEffect(() => {
@@ -134,7 +144,7 @@ export function PS2Startup() {
               className="text-white text-3xl sm:text-4xl font-semibold tracking-tight text-center px-6"
               style={{ textShadow: "0 0 35px rgba(80,130,255,0.45), 0 0 90px rgba(50,90,255,0.18)" }}
             >
-              {t("welcome")}
+              {isReturnRef.current ? t("welcomeBack") : t("welcome")}
             </motion.h1>
 
             <motion.div

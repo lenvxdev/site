@@ -1,9 +1,10 @@
 "use client";
 
 import { Canvas, useFrame } from "@react-three/fiber";
-import { useRef } from "react";
+import { useEffect, useRef, useSyncExternalStore } from "react";
 import * as THREE from "three";
 import { usePerf } from "../contexts/PerformanceContext";
+import { subscribeRedMode, getRedMode } from "../lib/redMode";
 
 if (typeof window !== "undefined") {
   const _warn = console.warn.bind(console);
@@ -24,6 +25,8 @@ precision highp float;
 
 uniform float uTime;
 uniform vec2  uRes;
+uniform vec3  uColor;
+uniform vec3  uAmbient;
 
 const float PI = 3.14159265358979323;
 
@@ -49,7 +52,7 @@ vec3 orbs(vec2 uv, float t) {
     pos = rZ(pos, t * 0.3);
     pos = rX(pos, t * 0.4);
     float str = 1.0 - smoothstep(0.0, 0.07, length(uv - pos.xy));
-    col += str * vec3(0.0, 0.2, 1.0) * (0.7 + 0.3 * cos(t - k * 0.5));
+    col += str * uColor * (0.7 + 0.3 * cos(t - k * 0.5));
   }
   return col;
 }
@@ -67,19 +70,33 @@ void main() {
   col      += pow(orbs(uv, t - 0.75),   vec3(2.5, 1.8, 1.0)) * 0.5;
 
   float d = length(uv);
-  col += vec3(0.03, 0.05, 0.18) * clamp(1.0 - d * 3.5, 0.0, 1.0);
+  col += uAmbient * clamp(1.0 - d * 3.5, 0.0, 1.0);
 
   gl_FragColor = vec4(col, 1.0);
 }
 `;
 
+const BLUE_COLOR   = new THREE.Vector3(0.0, 0.2, 1.0);
+const BLUE_AMBIENT = new THREE.Vector3(0.03, 0.05, 0.18);
+const RED_COLOR    = new THREE.Vector3(1.0, 0.05, 0.0);
+const RED_AMBIENT  = new THREE.Vector3(0.18, 0.03, 0.03);
+
 function ShaderPlane() {
   const matRef = useRef<THREE.ShaderMaterial>(null!);
+  const red = useSyncExternalStore(subscribeRedMode, getRedMode, () => false);
 
   const uniforms = useRef({
-    uTime: { value: 0 },
-    uRes:  { value: new THREE.Vector2(1, 1) },
+    uTime:    { value: 0 },
+    uRes:     { value: new THREE.Vector2(1, 1) },
+    uColor:   { value: BLUE_COLOR.clone() },
+    uAmbient: { value: BLUE_AMBIENT.clone() },
   });
+
+  useEffect(() => {
+    if (!matRef.current) return;
+    matRef.current.uniforms.uColor.value.copy(red ? RED_COLOR : BLUE_COLOR);
+    matRef.current.uniforms.uAmbient.value.copy(red ? RED_AMBIENT : BLUE_AMBIENT);
+  }, [red]);
 
   useFrame(({ clock, gl }) => {
     matRef.current.uniforms.uTime.value = clock.getElapsedTime();
@@ -103,12 +120,16 @@ function ShaderPlane() {
 
 export function PS2Background() {
   const { lowEnd } = usePerf();
+  const red = useSyncExternalStore(subscribeRedMode, getRedMode, () => false);
 
   if (lowEnd) {
     return (
       <div
         className="fixed inset-0 -z-10"
-        style={{ background: "radial-gradient(ellipse at 50% 30%, #0d0d1f 0%, #000000 70%)" }}
+        style={{ background: red
+          ? "radial-gradient(ellipse at 50% 30%, #1f0d0d 0%, #000000 70%)"
+          : "radial-gradient(ellipse at 50% 30%, #0d0d1f 0%, #000000 70%)"
+        }}
       />
     );
   }
