@@ -5,7 +5,7 @@ import { playSfx, isSoundEnabled } from "../lib/audio";
 import { usePS2Ready } from "../hooks/usePS2Ready";
 import { usePerf } from "../contexts/PerformanceContext";
 
-const INTERACTIVE = "a, button, [role='button'], [data-cursor-hash], input, select, label";
+const INTERACTIVE = "a, button, [role='button'], [role='link'], [data-cursor-stroke], [data-cursor-hash], input, select, label";
 
 export function GlobalSounds() {
   const ready  = usePS2Ready();
